@@ -29,6 +29,8 @@
             skip_invisible  : true,
             appear          : null,
             load            : null,
+            preload         : function(){},   // always running even found image or not.
+            success_load    : function(){},   // run when image found.
             placeholder     : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"
         };
 
@@ -97,6 +99,8 @@
 
             /* When appear is triggered load original image. */
             $self.one("appear", function() {
+                settings.preload(self);
+                
                 if (!this.loaded) {
                     if (settings.appear) {
                         var elements_left = elements.length;
@@ -105,6 +109,9 @@
                     $("<img />")
                         .bind("load", function() {
 
+                            // callback after finish load
+                            $self.data(settings.success_load(self))
+                            
                             var original = $self.attr("data-" + settings.data_attribute);
                             $self.hide();
                             if ($self.is("img")) {
